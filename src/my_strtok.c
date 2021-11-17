@@ -1,11 +1,11 @@
-typedef unsigned s21_size_t;
+typedef unsigned my_size_t;
 
 #include <stdio.h>
 #include <string.h>
 
-char *s21_strtok(char *str, const char *delim);
+char *my_strtok(char *str, const char *delim);
 
-char *s21_strtok(char *str, const char *delim) {
+char *my_strtok(char *str, const char *delim) {
     int flag = 0, len = 0;
     static char *s = NULL;
     char *tok = {0};

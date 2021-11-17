@@ -1,7 +1,7 @@
 #ifndef _SPRINTF_H_
 #define _SPRINTF_H_
 
-typedef unsigned s21_size_t;
+typedef unsigned my_size_t;
 
 struct Token {
     int flag;
@@ -22,9 +22,9 @@ struct Token {
 #define WIDTH_PRES_LEN 12
 #define LENGTH_LEN 3
 
-s21_size_t s21_strlen(const char *str);
+my_size_t my_strlen(const char *str);
 int get_format_token(char *format, char *token_str);
-int s21_sprintf(char *str, const char *format, ...);
+int my_sprintf(char *str, const char *format, ...);
 int start_processing(char *str, char*format, va_list params);
 int read_int_d(char *str, char *format, va_list parameters);
 int read_int_i(char *str, char *format, va_list parameters);
@@ -40,7 +40,7 @@ int get_number_length(char *str);
 int get_hexnum_length(char *str);
 int get_octnum_length(char *str);
 int expo(int k, int n);
-int s21_atoi(const char *s);
+int my_atoi(const char *s);
 unsigned int convert_to_dec(const char *arr, int len, char ch);
 unsigned int convert_from_oct(const char *arr, int len, int *displace);
 unsigned int convert_from_hex(const char *arr, int len, int *displace, int flag);

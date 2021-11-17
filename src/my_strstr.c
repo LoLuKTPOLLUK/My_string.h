@@ -1,11 +1,11 @@
-typedef unsigned s21_size_t;
+typedef unsigned my_size_t;
 
 #include <stdio.h>
 #include <string.h>
 
-char *s21_strstr(const char *haystack, const char *needle);
+char *my_strstr(const char *haystack, const char *needle);
 
-char *s21_strstr(const char *haystack, const char *needle) {
+char *my_strstr(const char *haystack, const char *needle) {
     int flag = 0;
     const char *ph, *pn;
     for (int i = 0; *haystack; haystack++) {

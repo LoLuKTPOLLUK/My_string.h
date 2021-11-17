@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "s21_sprintf.h"
+#include "my_sprintf.h"
 
-typedef unsigned s21_size_t;
+typedef unsigned my_size_t;
 
 struct f {
     int pluses;
@@ -19,15 +19,15 @@ struct f {
     int skip;
 } f;
 
-int s21_sprintf(char *str, const char *format, ...);
-char *s21_strcat(char *dest, const char *src);
-char *s21_itoa(int num);
-void s21_dtos(char *str, double num, double precision);
-void s21_clear(char* str);
-char *s21_parser(const char *format, char *token_str, int *counter);
-int s21_sscanf(const char *str, const char *format, ...);
+int my_sprintf(char *str, const char *format, ...);
+char *my_strcat(char *dest, const char *src);
+char *my_itoa(int num);
+void my_dtos(char *str, double num, double precision);
+void my_clear(char* str);
+char *my_parser(const char *format, char *token_str, int *counter);
+int my_sscanf(const char *str, const char *format, ...);
 int start_processing(char *str, char*format, va_list argptr);
-void s21_reverse_str(char *dest, char *str);
+void my_reverse_str(char *dest, char *str);
 int check_int(char c);
 int check_string(const char *str, int counter);
 void check_flags(char *str, char *token_str, va_list argptr);
@@ -40,20 +40,10 @@ void main_process(char *str, char *token_str, va_list argptr, char spec);
 
 int main() {
     char str[100];
-    //s21_sprintf(str, "%s %d %c", "one", 2, '3');
-    //sprintf(str, "abo%sba", "aye");
-    //sprintf(str, "%dab%doba%d", 12, 34, 56);
-    //sprintf(str, "aboba%d", 12);
-    //sprintf(str, "%e", 1.2);
-    //sprintf(str, "aboba%s%f", "aboba", 1.2);
-    //sprintf(str, "%-d", 123);
-    //sprintf(str, "abo%-+5dba", 123);
-    //sprintf(str, "%5d", 123);
-    //s21_sprintf(str, "%5d", 123);
     printf("%s", str);
 }
 
-char *s21_parser(const char *format, char *token_str, int *counter) {
+char *my_parser(const char *format, char *token_str, int *counter) {
     int i = 0, j = 0, s = 0, flag = 0;
     while (format) {
         if (check_specs(*format)) {
@@ -82,7 +72,7 @@ void while_c(char *str, char *token_str, char *num, int len, int i) {
         len *= -1;
     }
     while (len - 1 != 0) {
-        s21_strcat(str, " ");
+        my_strcat(str, " ");
         len--;
     }
 }
@@ -102,12 +92,12 @@ void while_d(char *str, char *token_str, char *num, int len, int i) {
     }
     if (f.pluses == 1 && num[0] != '-') {
         token_len--;
-        s21_strcat(str, "+");
+        my_strcat(str, "+");
     }
-    s21_strcat(str, num);
+    my_strcat(str, num);
     if (token_len != len) {
         while (token_len > len) {
-            s21_strcat(str, " ");
+            my_strcat(str, " ");
             len++;
         }
     }
@@ -118,27 +108,27 @@ void processing_d(char *str, char *token_str, va_list argptr) {
     int i = 0, j = 0, x = 0, len = 0, token_len = 0;
     int tmp;
     tmp = va_arg(argptr, int);
-    num = s21_itoa(tmp);
-    len = s21_strlen(num);
+    num = my_itoa(tmp);
+    len = my_strlen(num);
     if (f.minuses == 0 && f.pluses == 0 && f.spaces == 0 && f.zeros == 0) {
         printf("A\n");
         if (check_int(token_str[i])) {
             while_d(str, token_str, num, len, i);
         }
-        //s21_strcat(str, num);
+        //my_strcat(str, num);
     } else if (f.minuses == 1) {// && f.spaces == 0) {
         printf("B\n");
         i++;
         while_d(str, token_str, num, len, i);
-        //s21_strcat(str, num);
+        //my_strcat(str, num);
     } else if (f.minuses == 1 && f.spaces == 1) {
         printf("C\n");
         if (token_str[i] == ' ' || token_str[i + 1] == ' ') {
-            s21_strcat(str, " ");
+            my_strcat(str, " ");
             len++;
             i+=2;
         }
-        //s21_strcat(str, num);
+        //my_strcat(str, num);
         while_d(str, token_str, num, len, i);
     } else if (f.pluses == 1 && f.minuses == 0 && f.spaces == 0) {
         printf("D\n");
@@ -146,10 +136,10 @@ void processing_d(char *str, char *token_str, va_list argptr) {
         if (check_int(token_str[i])) {
             while_d(str, token_str, num, len, i);
         }
-        //s21_strcat(str, num);
+        //my_strcat(str, num);
     } else {
         printf("This flag results in undefined behaviour with 'd' conversion specifier\n");
-        //s21_strcat(str, num);
+        //my_strcat(str, num);
         f.skip = 1;
     }
 }
@@ -190,11 +180,11 @@ void processing_c(char *str, char *token_str, va_list argptr) {
     }
     if (f.minuses == 1) {
         i++;
-        s21_strcat(str, &tmp);
+        my_strcat(str, &tmp);
         while_c(str, token_str, num, len, i);
     } else if (f.nums == 1) {
         while_c(str, token_str, num, len, i);
-        s21_strcat(str, &tmp);
+        my_strcat(str, &tmp);
     }
 }
 
@@ -220,7 +210,7 @@ void main_process(char *str, char *token_str, va_list argptr, char spec) {
 int start_processing(char *str, char *format, va_list argptr) {
     int i = 0, j = 0, tmp = 0;
     char *num = {0}, spec = {0};
-    s21_size_t len = s21_strlen(format);
+    my_size_t len = my_strlen(format);
     while (format[i] != '\0') {
         if (check_specs(format[i])) {
             spec = format[i];
@@ -232,16 +222,16 @@ int start_processing(char *str, char *format, va_list argptr) {
     return 0;
 }
 
-int s21_sprintf(char *str, const char *format, ...) {
+int my_sprintf(char *str, const char *format, ...) {
     int d = 0, ii = 0, i = 0, j = 0, flag = 0, result = 0, p = 0, counter = 0;
     double f;
-    s21_clear(str);
+    my_clear(str);
     va_list argptr;
     va_start(argptr, format);
     while(*format != '\0') {
         if (*format != '%') {
             char tmp = *format;
-            s21_strcat(str, &tmp);
+            my_strcat(str, &tmp);
             counter++;
         }
         if (*format == '%') {
@@ -251,7 +241,7 @@ int s21_sprintf(char *str, const char *format, ...) {
             }
             char token_str[256];
             format++;
-            s21_parser(format, token_str, &counter);
+            my_parser(format, token_str, &counter);
             start_processing(str, token_str, argptr);
             format+=counter;
             counter = 0;
@@ -262,15 +252,15 @@ int s21_sprintf(char *str, const char *format, ...) {
     return result;
 }
 
-void s21_reverse_str(char *dest, char *str) {
-    s21_size_t len = s21_strlen(str);
-    for (s21_size_t i = 0, j = len - 1; i < len; i++, j--) {
+void my_reverse_str(char *dest, char *str) {
+    my_size_t len = my_strlen(str);
+    for (my_size_t i = 0, j = len - 1; i < len; i++, j--) {
         dest[i] = str[j];
     }
 }
 
 
-char *s21_itoa(int num) {
+char *my_itoa(int num) {
     char tmp[20] = {0};
     char *res = (char*) malloc(10 * sizeof(char));
     int i = 0;
@@ -287,33 +277,33 @@ char *s21_itoa(int num) {
     if (num < 0) {
         tmp[i] = '-';
     }
-    s21_reverse_str(res, tmp);
+    my_reverse_str(res, tmp);
     free(res);
     return res;
 }
 
-char *s21_strcat(char *dest, const char *src) {
+char *my_strcat(char *dest, const char *src) {
     char *t;
     for (t = dest; *t; ++t);
     while (*t++ += *src++);
     return dest;
 }
 
-s21_size_t s21_strlen(const char* str) {
+my_size_t my_strlen(const char* str) {
     const char* cur = str;
     for (; *cur; ++cur) {
     }
     return cur - str;
 }
 
-void s21_clear(char *str) {
+void my_clear(char *str) {
     while (*str) {
         *str = 0;
         str++;
     }
 }
 
-void s21_dtos(char *str, double num, double precision) {
+void my_dtos(char *str, double num, double precision) {
     int m = (log10(num));
     int digit, i = 0;
     char tmp;
@@ -349,7 +339,7 @@ int get_format_token(char *format, char *token_str) {
 }
 
 int convert_from_int(char *str, int *displace) {
-    int num = s21_atoi(str);
+    int num = my_atoi(str);
     int tmp = num;
     while (tmp != 0) {
         tmp = tmp / 10;
@@ -424,9 +414,9 @@ unsigned int convert_from_oct(const char *arr, int len, int *displace) {
     return res;
 }
 
-int s21_atoi(const char *s) {
+int my_atoi(const char *s) {
   char *str = (char *)s;
-  size_t n = s21_strlen(str);
+  size_t n = my_strlen(str);
   char tmp[n];
   int res = 0;
   int rank = 0;
